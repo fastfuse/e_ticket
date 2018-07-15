@@ -1,0 +1,9 @@
+werkzeug
+Flask
+flask-migrate
+flask-admin
+requests
+psycopg2-binary
+flask-login
+SQLAlchemy
+Flask-SQLAlchemy

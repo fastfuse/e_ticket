@@ -1,0 +1,32 @@
+# Version 2 is required for AWS
+#version: '2'
+version: '3'
+
+services:
+  app:
+    container_name: dashboard_app
+    environment:
+      - DATABASE_URL=postgresql://pt_tickets:admin@postgres:5432/pt_eticket_db
+    build:
+     context: .
+     dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: 'postgres:alpine'
+    environment:
+      - POSTGRES_USER=pt_tickets
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=pt_eticket_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  # persist db data
+  postgres-data:

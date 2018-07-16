@@ -8,8 +8,8 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # environment variables
-#ENV APP_SETTINGS="config.ProductionConfig"
 ENV FLASK_APP="application/__init__.py"
+#ENV APP_SETTINGS="config.ProductionConfig"
 # do not set it for production
 ENV APP_SETTINGS="config.DevelopmentConfig"
 ENV FLASK_ENV="development"

@@ -4,6 +4,8 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from application import db, login
+# from sqlalchemy_utils.types.choice import ChoiceType
+import enum
 
 
 class BaseMixin:
@@ -59,3 +61,41 @@ class Ticket(db.Model, BaseMixin):
     uid = db.Column('uid', db.String, unique=True)
     added = db.Column('added', db.DateTime, default=datetime.utcnow)
     available_trips = db.Column('available_trips', db.Integer, default=1)
+
+
+class Reader(db.Model, BaseMixin):
+    """
+    Model represents RFID reader device (w/ unique ID)
+    """
+
+    __tablename__ = 'readers'
+
+    id = db.Column(db.Integer, primary_key=True)
+    uid = db.Column('uid', db.String, unique=True)
+
+
+class Transaction(db.Model, BaseMixin):
+    """
+    Model represents payment transaction.
+    Required for validation
+    """
+    __tablename__ = 'transactions'
+
+    class Statuses(enum.Enum):
+        success = 'Success'
+        failure = 'Failure'
+
+    id = db.Column(db.Integer, primary_key=True)
+    uid = db.Column(db.String, unique=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    # self.timestamp = datetime.utcnow().replace(microsecond=0) + \
+    #                  timedelta(hours=3)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('tags.id'))
+    reader_id = db.Column(db.Integer, db.ForeignKey('readers.id'))
+    status = db.Column(db.Enum(Statuses))
+
+    ticket = db.relationship('Ticket',
+                             backref=db.backref('transactions', lazy='dynamic'))
+
+    reader = db.relationship('Reader',
+                             backref=db.backref('transactions', lazy='dynamic'))

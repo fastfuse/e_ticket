@@ -109,7 +109,7 @@ class TicketRefillView(MethodView):
 
             if not trips:
                 return jsonify(
-                    json_resp("Failure", "Please provide trips number")), 400
+                    json_resp("Failure", "Please provide number of trips")), 400
 
             ticket = models.Ticket.query.filter_by(uid=uid).one_or_none()
 

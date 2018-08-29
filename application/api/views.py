@@ -1,6 +1,8 @@
 """
 API views
 """
+import enum
+import uuid
 
 from flask import request, jsonify
 from flask.views import MethodView
@@ -9,6 +11,9 @@ from sqlalchemy.exc import IntegrityError
 from application import models, logger
 from application.utils import json_resp
 from . import api_blueprint
+
+SUCCESS = 'success'
+FAILURE = 'failure'
 
 
 class TicketRegistrationView(MethodView):
@@ -44,7 +49,7 @@ class TicketRegistrationView(MethodView):
         except Exception as e:
             logger.error(e)
 
-            return jsonify(json_resp("Fail", "Some error occurred")), 500
+            return jsonify(json_resp("Failure", "Some error occurred")), 500
 
 
 class PaymentView(MethodView):
@@ -55,23 +60,46 @@ class PaymentView(MethodView):
     def post(self):
         try:
             data = request.get_json()
-            uid = data.get('uid', None)
+            ticket_uid = data.get('ticket_uid', None)
+            reader_uid = data.get('reader_uid', None)
 
-            if not uid:
+            # TODO: add better fields validation
+            if not ticket_uid:
                 return jsonify(
                     json_resp("Failure", "Failed to get ticket ID")), 400
 
-            ticket = models.Ticket.query.filter_by(uid=uid).one_or_none()
+            if not reader_uid:
+                return jsonify(
+                    json_resp("Failure", "Failed to get reader ID")), 400
+
+            ticket = models.Ticket.query.filter_by(uid=ticket_uid).one_or_none()
+            reader = models.Reader.query.filter_by(uid=reader_uid).one_or_none()
 
             if not ticket:
-                logger.info(f"Payment failure. Ticket not found. UID: {uid}")
+                logger.info(
+                    f"Payment failure. Ticket not found. UID: {ticket_uid}")
 
                 return jsonify(
                     json_resp("Failure", "Ticket not found")), 404
 
+            if not reader:
+                logger.info(
+                    f"Payment failure. Reader not found. UID: {reader_uid}")
+
+                return jsonify(
+                    json_resp("Failure", "Reader not found")), 404
+
+            # create transaction
+            transaction = models.Transaction(uid=uuid.uuid4(),
+                                             ticket_id=ticket.id,
+                                             reader_id=reader.id)
+
             if ticket.available_trips < 1:
                 logger.info(
                     f"Payment failure. Reason: no available trips. Ticket UID: {ticket.uid}")
+
+                transaction.status = FAILURE
+                transaction.save()
 
                 return jsonify(
                     json_resp("Failure",
@@ -79,6 +107,9 @@ class PaymentView(MethodView):
             else:
                 ticket.available_trips -= 1
                 ticket.save()
+
+                transaction.status = SUCCESS
+                transaction.save()
 
                 logger.info(f"Payment success. Ticket UID: {ticket.uid}")
 

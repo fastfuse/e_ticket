@@ -1,3 +1,4 @@
+voluptuous
 werkzeug
 Flask
 flask-migrate

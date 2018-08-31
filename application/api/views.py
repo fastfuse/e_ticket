@@ -1,15 +1,15 @@
 """
 API views
 """
-import enum
 import uuid
 
 from flask import request, jsonify
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError
+from voluptuous import MultipleInvalid
 
 from application import models, logger
-from application.utils import json_resp
+from application.utils import json_resp, BASE_SCHEMA, PAYMENT_SCHEMA, REFILL_SCHEMA
 from . import api_blueprint
 
 SUCCESS = 'success'
@@ -23,17 +23,16 @@ class TicketRegistrationView(MethodView):
 
     def post(self):
         try:
-            request_data = request.get_json()
+            data = request.get_json()
 
-            uid = request_data.get('uid', None)
-
-            if not uid:
+            try:
+                BASE_SCHEMA(data)
+            except MultipleInvalid as e:
                 return jsonify(
-                    json_resp("Failure", "Failed to get ticket ID")), 400
+                    json_resp("Failure", str(e))), 400
 
-            trips = request_data.get('trips', 1)
-
-            ticket = models.Ticket(uid=uid, available_trips=trips)
+            ticket_uid = data['ticket_uid']
+            ticket = models.Ticket(uid=ticket_uid, available_trips=1)
             ticket.save()
 
             logger.info(f"New ticket registered. UID: {ticket.uid}")
@@ -60,31 +59,26 @@ class PaymentView(MethodView):
     def post(self):
         try:
             data = request.get_json()
-            ticket_uid = data.get('ticket_uid', None)
-            reader_uid = data.get('reader_uid', None)
 
-            # TODO: add better fields validation
-            if not ticket_uid:
+            try:
+                PAYMENT_SCHEMA(data)
+            except MultipleInvalid as e:
                 return jsonify(
-                    json_resp("Failure", "Failed to get ticket ID")), 400
+                    json_resp("Failure", str(e))), 400
 
-            if not reader_uid:
-                return jsonify(
-                    json_resp("Failure", "Failed to get reader ID")), 400
-
-            ticket = models.Ticket.query.filter_by(uid=ticket_uid).one_or_none()
-            reader = models.Reader.query.filter_by(uid=reader_uid).one_or_none()
+            ticket = models.Ticket.query.filter_by(uid=data['ticket_uid']).one_or_none()
+            reader = models.Reader.query.filter_by(uid=data['reader_uid']).one_or_none()
 
             if not ticket:
                 logger.info(
-                    f"Payment failure. Ticket not found. UID: {ticket_uid}")
+                    f"Payment failure. Ticket not found")
 
                 return jsonify(
                     json_resp("Failure", "Ticket not found")), 404
 
             if not reader:
                 logger.info(
-                    f"Payment failure. Reader not found. UID: {reader_uid}")
+                    f"Payment failure. Reader not found")
 
                 return jsonify(
                     json_resp("Failure", "Reader not found")), 404
@@ -130,23 +124,20 @@ class TicketRefillView(MethodView):
     def post(self):
         try:
             data = request.get_json()
-            uid = data.get('uid', None)
 
-            if not uid:
+            try:
+                REFILL_SCHEMA(data)
+            except MultipleInvalid as e:
                 return jsonify(
-                    json_resp("Failure", "Failed to get ticket ID")), 400
+                    json_resp("Failure", str(e))), 400
 
-            trips = data.get('trips', None)
-
-            if not trips:
-                return jsonify(
-                    json_resp("Failure", "Please provide number of trips")), 400
-
-            ticket = models.Ticket.query.filter_by(uid=uid).one_or_none()
+            ticket = models.Ticket.query.filter_by(uid=data['ticket_uid']).one_or_none()
 
             if not ticket:
                 return jsonify(
                     json_resp("Failure", "Ticket not found")), 404
+
+            trips = data.get('trips', 1)
 
             ticket.available_trips += trips
             ticket.save()
@@ -154,6 +145,49 @@ class TicketRefillView(MethodView):
             logger.info(f"Successful ticket refill. Ticket UID: {ticket.uid}")
 
             return jsonify(json_resp("Success", "Refill successful")), 200
+
+        except Exception as e:
+            logger.error(e)
+
+            return jsonify(json_resp("Failure", "Some error occurred")), 500
+
+
+class TicketValidationView(MethodView):
+    """
+    Validate ticket
+    """
+
+    def post(self):
+        try:
+            data = request.get_json()
+
+            try:
+                PAYMENT_SCHEMA(data)
+            except MultipleInvalid as e:
+                return jsonify(
+                    json_resp("Failure", str(e))), 400
+
+            ticket = models.Ticket.query.filter_by(uid=data['ticket_uid']).one_or_none()
+            reader = models.Reader.query.filter_by(uid=data['reader_uid']).one_or_none()
+
+            if not ticket:
+                logger.info(
+                    f"Payment failure. Ticket not found")
+
+                return jsonify(
+                    json_resp("Failure", "Ticket not found")), 404
+
+            if not reader:
+                logger.info(
+                    f"Payment failure. Reader not found")
+
+                return jsonify(
+                    json_resp("Failure", "Reader not found")), 404
+
+            transactions = models.Transaction.query.filter_by(ticket_id=ticket.id).all()
+
+            if transactions:
+                return transactions[-1].timestamp
 
         except Exception as e:
             logger.error(e)
@@ -174,4 +208,8 @@ api_blueprint.add_url_rule('/pay',
 
 api_blueprint.add_url_rule('/refill',
                            view_func=TicketRefillView.as_view('refill'),
+                           methods=['POST'])
+
+api_blueprint.add_url_rule('/validate',
+                           view_func=TicketValidationView.as_view('validation'),
                            methods=['POST'])

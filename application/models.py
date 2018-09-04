@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from application import db, login
+# from sqlalchemy_utils.types.choice import ChoiceType
 import enum
 
 
@@ -66,7 +67,6 @@ class Reader(db.Model, BaseMixin):
     """
     Model represents RFID reader device (w/ unique ID)
     """
-
     __tablename__ = 'readers'
 
     id = db.Column(db.Integer, primary_key=True)

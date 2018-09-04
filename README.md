@@ -1,4 +1,4 @@
-## Public Transport E-Ticketing System backend.
+## Public Transport E-Ticketing System backend
 
 ### Development
 

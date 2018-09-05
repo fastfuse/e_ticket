@@ -1,14 +1,13 @@
 """
 API views
 """
-
 from flask import request, jsonify
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError
 from voluptuous import MultipleInvalid, datetime
 
 from application import models, logger
-from application.utils import json_resp, BASE_SCHEMA, PAYMENT_SCHEMA, REFILL_SCHEMA
+from application.utils import json_resp, BASE_SCHEMA, PAYMENT_SCHEMA, REFILL_SCHEMA, VALIDATION_SCHEMA
 from . import api_blueprint
 
 SUCCESS = 'success'
@@ -79,7 +78,7 @@ class PaymentView(MethodView):
 
                 return jsonify(json_resp("Failure", "Reader not found")), 404
 
-            if models.Transaction.query.filter_by(uid=transaction_uid).one():
+            if models.Transaction.query.filter_by(uid=transaction_uid).one_or_none():
                 logger.info("Payment failure. Transaction with the same ID already exists.")
 
                 return jsonify(json_resp("Failure", "Transaction with the same ID already exists.")), 400
@@ -156,7 +155,7 @@ class TicketValidationView(MethodView):
             data = request.get_json()
 
             try:
-                PAYMENT_SCHEMA(data)
+                VALIDATION_SCHEMA(data)
             except MultipleInvalid as e:
                 return jsonify(json_resp("Failure", str(e))), 400
 
@@ -164,21 +163,32 @@ class TicketValidationView(MethodView):
             reader = models.Reader.query.filter_by(uid=data['reader_uid']).one_or_none()
 
             if not ticket:
-                logger.info("Payment failure. Ticket not found")
+                logger.info("Validation failure. Ticket not found")
 
                 return jsonify(json_resp("Failure", "Ticket not found")), 404
 
             if not reader:
-                logger.info("Payment failure. Reader not found")
+                logger.info("Validation failure. Reader not found")
 
                 return jsonify(json_resp("Failure", "Reader not found")), 404
 
             transactions = models.Transaction.query.filter_by(ticket_id=ticket.id).all()
 
-            if transactions:
-                t = transactions[-1]
-                return jsonify(ticket=t.ticket_id, timestamp=t.timestamp + datetime.timedelta(hours=3),
-                               reaader=t.reader_id, status=t.status.value)
+            if not transactions:
+                logger.info("Validation failure. No transactions found")
+
+                return jsonify(json_resp("Failure", "No transactions found")), 404
+
+            else:
+                last_transaction = transactions[-1]
+
+                now = datetime.datetime.utcnow().replace(microsecond=0) + datetime.timedelta(hours=3)
+                hour = datetime.timedelta(hours=1)
+
+                is_valid = last_transaction.reader.uid == reader.uid and last_transaction.timestamp + hour >= now and \
+                    last_transaction.status.value == 'Success'
+
+                return jsonify(valid=is_valid), 200
 
         except Exception as e:
             logger.error(e)

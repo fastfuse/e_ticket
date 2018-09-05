@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pytz
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -87,8 +88,6 @@ class Transaction(db.Model, BaseMixin):
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.String, unique=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    # self.timestamp = datetime.utcnow().replace(microsecond=0) + \
-    #                  timedelta(hours=3)
     ticket_id = db.Column(db.Integer, db.ForeignKey('tags.id'))
     reader_id = db.Column(db.Integer, db.ForeignKey('readers.id'))
     status = db.Column(db.Enum(Statuses))
@@ -98,3 +97,10 @@ class Transaction(db.Model, BaseMixin):
 
     reader = db.relationship('Reader',
                              backref=db.backref('transactions', lazy='dynamic'))
+
+    def __init__(self, uid, ticket_id, reader_id, status='failure'):
+        self.uid = uid
+        self.ticket_id = ticket_id
+        self.reader_id = reader_id
+        self.status = status
+        self.timestamp = pytz.timezone('Europe/Kiev').fromutc(datetime.now().replace(microsecond=0))

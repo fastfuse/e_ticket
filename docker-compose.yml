@@ -4,7 +4,7 @@ version: '3'
 
 services:
   app:
-    container_name: dashboard_app
+    container_name: e_ticket_app
     environment:
       - DATABASE_URL=postgresql://pt_tickets:admin@postgres:5432/pt_eticket_db
     build:
@@ -18,6 +18,7 @@ services:
 
   postgres:
     image: 'postgres:alpine'
+    container_name: e_ticket_db
     environment:
       - POSTGRES_USER=pt_tickets
       - POSTGRES_PASSWORD=admin

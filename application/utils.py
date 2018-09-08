@@ -20,7 +20,7 @@ BASE_SCHEMA = Schema({
 })
 
 PAYMENT_SCHEMA = BASE_SCHEMA.extend({
-    Required('reader_uid'): All(str, Length(min=1)),
+    Required('vehicle_uid'): All(str, Length(min=1)),
     Required('transaction_uid'): All(str, Length(min=1))
 })
 
@@ -29,5 +29,5 @@ REFILL_SCHEMA = BASE_SCHEMA.extend({
 })
 
 VALIDATION_SCHEMA = BASE_SCHEMA.extend({
-    Required('reader_uid'): All(str, Length(min=1))
+    Required('vehicle_uid'): All(str, Length(min=1))
 })

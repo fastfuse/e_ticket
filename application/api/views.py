@@ -64,7 +64,7 @@ class PaymentView(MethodView):
                     json_resp("Failure", str(e))), 400
 
             ticket = models.Ticket.query.filter_by(uid=data['ticket_uid']).one_or_none()
-            reader = models.Reader.query.filter_by(uid=data['reader_uid']).one_or_none()
+            vehicle = models.Vehicle.query.filter_by(uid=data['vehicle_uid']).one_or_none()
 
             transaction_uid = data['transaction_uid']
 
@@ -73,10 +73,10 @@ class PaymentView(MethodView):
 
                 return jsonify(json_resp("Failure", "Ticket not found")), 404
 
-            if not reader:
-                logger.info("Payment failure. Reader not found")
+            if not vehicle:
+                logger.info("Payment failure. Vehicle not found")
 
-                return jsonify(json_resp("Failure", "Reader not found")), 404
+                return jsonify(json_resp("Failure", "Vehicle not found")), 404
 
             if models.Transaction.query.filter_by(uid=transaction_uid).one_or_none():
                 logger.info("Payment failure. Transaction with the same ID already exists.")
@@ -84,7 +84,7 @@ class PaymentView(MethodView):
                 return jsonify(json_resp("Failure", "Transaction with the same ID already exists.")), 400
 
             # create transaction
-            transaction = models.Transaction(uid=transaction_uid, ticket_id=ticket.id, reader_id=reader.id)
+            transaction = models.Transaction(uid=transaction_uid, ticket_id=ticket.id, vehicle_id=vehicle.id)
 
             if ticket.available_trips < 1:
                 logger.info(f"Payment failure. Reason: no available trips. Ticket UID: {ticket.uid}")
@@ -150,7 +150,14 @@ class TicketValidationView(MethodView):
     """
 
     def post(self):
-        # TODO: design validation
+        """
+        Validation
+
+        * check ticket and vehicle id;
+        * find last transaction for provided ticket and vehicle ids and validate it (check that the last transaction
+          was created less than hour ago)
+
+        """
         try:
             data = request.get_json()
 
@@ -160,19 +167,21 @@ class TicketValidationView(MethodView):
                 return jsonify(json_resp("Failure", str(e))), 400
 
             ticket = models.Ticket.query.filter_by(uid=data['ticket_uid']).one_or_none()
-            reader = models.Reader.query.filter_by(uid=data['reader_uid']).one_or_none()
+            vehicle = models.Vehicle.query.filter_by(uid=data['vehicle_uid']).one_or_none()
 
             if not ticket:
                 logger.info("Validation failure. Ticket not found")
 
                 return jsonify(json_resp("Failure", "Ticket not found")), 404
 
-            if not reader:
-                logger.info("Validation failure. Reader not found")
+            if not vehicle:
+                logger.info("Validation failure. Vehicle not found")
 
-                return jsonify(json_resp("Failure", "Reader not found")), 404
+                return jsonify(json_resp("Failure", "Vehicle not found")), 404
 
-            transactions = models.Transaction.query.filter_by(ticket_id=ticket.id).all()
+            # get all transactions for provided ticket
+            transactions = models.Transaction.query.filter_by(ticket_id=ticket.id,
+                                                              vehicle_id=vehicle.id).all()
 
             if not transactions:
                 logger.info("Validation failure. No transactions found")
@@ -185,8 +194,7 @@ class TicketValidationView(MethodView):
                 now = datetime.datetime.utcnow().replace(microsecond=0) + datetime.timedelta(hours=3)
                 hour = datetime.timedelta(hours=1)
 
-                is_valid = last_transaction.reader.uid == reader.uid and last_transaction.timestamp + hour >= now and \
-                    last_transaction.status.value == 'Success'
+                is_valid = last_transaction.timestamp + hour >= now and last_transaction.status.value == 'Success'
 
                 return jsonify(valid=is_valid), 200
 

@@ -5,7 +5,6 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from application import db, login
-# from sqlalchemy_utils.types.choice import ChoiceType
 import enum
 
 
@@ -74,6 +73,16 @@ class Reader(db.Model, BaseMixin):
     uid = db.Column('uid', db.String, unique=True)
 
 
+class Vehicle(db.Model, BaseMixin):
+    """
+    Model represents public transport vehicle (w/ unique ID)
+    """
+    __tablename__ = 'vehicles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    uid = db.Column('uid', db.String, unique=True)
+
+
 class Transaction(db.Model, BaseMixin):
     """
     Model represents payment transaction.
@@ -89,18 +98,18 @@ class Transaction(db.Model, BaseMixin):
     uid = db.Column(db.String, unique=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     ticket_id = db.Column(db.Integer, db.ForeignKey('tags.id'))
-    reader_id = db.Column(db.Integer, db.ForeignKey('readers.id'))
+    vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'))
     status = db.Column(db.Enum(Statuses))
 
     ticket = db.relationship('Ticket',
                              backref=db.backref('transactions', lazy='dynamic'))
 
-    reader = db.relationship('Reader',
-                             backref=db.backref('transactions', lazy='dynamic'))
+    vehicle = db.relationship('Vehicle',
+                              backref=db.backref('transactions', lazy='dynamic'))
 
-    def __init__(self, uid, ticket_id, reader_id, status='failure'):
+    def __init__(self, uid, ticket_id, vehicle_id, status='failure'):
         self.uid = uid
         self.ticket_id = ticket_id
-        self.reader_id = reader_id
+        self.vehicle_id = vehicle_id
         self.status = status
         self.timestamp = pytz.timezone('Europe/Kiev').fromutc(datetime.now().replace(microsecond=0))

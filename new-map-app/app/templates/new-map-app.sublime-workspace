@@ -1,0 +1,974 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"sho",
+				"showDirections"
+			],
+			[
+				"ori",
+				"origin"
+			],
+			[
+				"in",
+				"input"
+			],
+			[
+				"get",
+				"getPlace"
+			],
+			[
+				"origi",
+				"originInput"
+			],
+			[
+				"s",
+				"showDirections"
+			],
+			[
+				"fu",
+				"function"
+			],
+			[
+				"col",
+				"col-xs-9"
+			],
+			[
+				"classN",
+				"className"
+			],
+			[
+				"lat",
+				"latLngs"
+			],
+			[
+				"re",
+				"result"
+			],
+			[
+				"reo",
+				"routes"
+			],
+			[
+				"auto",
+				"autocompleteFrom"
+			],
+			[
+				"to",
+				"toInput"
+			],
+			[
+				"from",
+				"fromInput"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "\nvar osm = L.tileLayer(\"http://{s}.tile.osm.org/{z}/{x}/{y}.png\"),\n\n    mapboxLight = L.tileLayer(\"https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmFzdGZ1c2UiLCJhIjoiY2l1ZnN3cm0yMDAyczJ2dXZyYWZnaWVjciJ9.411LJ8YHIUYLmTGrfvfkLg\"),\n\n    mapboxStreets = L.tileLayer(\"https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmFzdGZ1c2UiLCJhIjoiY2l1ZnN3cm0yMDAyczJ2dXZyYWZnaWVjciJ9.411LJ8YHIUYLmTGrfvfkLg\"),\n\n    mapboxDark = L.tileLayer(\"https://api.mapbox.com/styles/v1/mapbox/dark-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmFzdGZ1c2UiLCJhIjoiY2l1ZnN3cm0yMDAyczJ2dXZyYWZnaWVjciJ9.411LJ8YHIUYLmTGrfvfkLg\");\n\n\nvar baseMapLayers = {\n    \"Open Street Maps\": osm,\n    \"Mapbox Streets\": mapboxStreets,\n    \"Mapbox Light\": mapboxLight,\n    \"Mapbox Dark\": mapboxDark\n};\n\n\nvar map = L.map('map-container', {\n  center: [49.84104, 24.03164],\n  zoom: 13,\n  zoomControl: false,\n  layers: [osm]\n});\n\n\nL.control.layers(baseMapLayers).addTo(map);\n\n\nL.control.zoom({\n  position: 'bottomright'\n}).addTo(map);\n\n// ============================================\n\n// $.ajax({\n//     type: \"GET\",\n//     url: \"static/data/city_stops.geojson\",\n//     dataType: \"json\",\n//     success: function (response) {\n//       stops_layer = L.geoJSON(response,{\n//         onEachFeature: function(feature, layer){\n//           layer.bindPopup(feature.properties.code);\n//           layer.bindPopup('<a href=\"/info/'+feature.properties.code+'\">'+feature.properties.name+'</a>');\n//         }\n//       })\n\n//       stops_clustered = L.markerClusterGroup();\n//       stops_clustered.addLayer(stops_layer);\n//       map.addLayer(stops_clustered);\n//     }\n// });\n\n// var locateControl = L.control.locate({\n//   position: \"bottomright\",\n//   flyTo: true,\n//   drawCircle: true,\n//   follow: true,\n//   setView: true,\n//   keepCurrentZoomLevel: true,\n//   markerStyle: {\n//     weight: 1,\n//     opacity: 0.8,\n//     fillOpacity: 0.8\n//   },\n//   circleStyle: {\n//     weight: 1,\n//     clickable: false\n//   },\n//   metric: true,\n//   strings: {\n//     title: \"My location (where am I?)\",\n//     popup: \"You are within {distance} {unit} from this point\",\n//     outsideMapBoundsMsg: \"You seem located outside the boundaries of the map\"\n//   },\n//   locateOptions: {\n//     maxZoom: 18,\n//     watch: true,\n//     enableHighAccuracy: true,\n//     maximumAge: 10000,\n//     timeout: 10000\n//   }\n// }).addTo(map);\n\n\n\n\nvar osm = L.tileLayer(\"http://{s}.tile.osm.org/{z}/{x}/{y}.png\"),\n\n    mapboxLight = L.tileLayer(\"https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmFzdGZ1c2UiLCJhIjoiY2l1ZnN3cm0yMDAyczJ2dXZyYWZnaWVjciJ9.411LJ8YHIUYLmTGrfvfkLg\"),\n\n    mapboxStreets = L.tileLayer(\"https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmFzdGZ1c2UiLCJhIjoiY2l1ZnN3cm0yMDAyczJ2dXZyYWZnaWVjciJ9.411LJ8YHIUYLmTGrfvfkLg\"),\n\n    mapboxDark = L.tileLayer(\"https://api.mapbox.com/styles/v1/mapbox/dark-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmFzdGZ1c2UiLCJhIjoiY2l1ZnN3cm0yMDAyczJ2dXZyYWZnaWVjciJ9.411LJ8YHIUYLmTGrfvfkLg\");\n\n\nvar baseMapLayers = {\n    \"Open Street Maps\": osm,\n    \"Mapbox Streets\": mapboxStreets,\n    \"Mapbox Light\": mapboxLight,\n    \"Mapbox Dark\": mapboxDark\n};\n\n\nvar map = L.map('map-container', {\n  center: [49.84104, 24.03164],\n  zoom: 13,\n  zoomControl: false,\n  layers: [osm]\n});\n\nL.control.layers(baseMapLayers).addTo(map);\n\n\nL.control.zoom({\n  position: 'bottomright'\n}).addTo(map);\n\n// ====================\n\n// var myLocationIcon = L.icon({\n//     iconUrl: 'static/img/me.svg',\n//     iconSize:     [40, 40],\n//     iconAnchor:   [20, 40],\n//     popupAnchor:  [0, -35]\n// });\n\n// function onLocationFound(e) {\n//     L.marker(e.latlng, {icon: myLocationIcon}).addTo(map)\n//         .bindPopup(\"Ви тут\").openPopup();\n// }\n\n// function onLocationError(e) {\n//     alert(e.message);\n// }\n\n\n// map.on('locationfound', onLocationFound);\n// map.on('locationerror', onLocationError);\n// map.locate({setView: true, maxZoom: 16});\n\n\n// =======================================\n\n\n  autocompleteFrom = new google.maps.places.Autocomplete(document.getElementById(\"fromInput\"));\n  autocompleteTo = new google.maps.places.Autocomplete(document.getElementById(\"toInput\"));\n\n  autocompleteFrom.addListener('place_changed', function(){\n    \n    var dataFrom = autocompleteFrom.getPlace();\n\n    console.log(dataFrom.geometry.location.toJSON())\n\n    L.marker(dataFrom.geometry.location.toJSON()).addTo(map).bindPopup(dataFrom.formatted_address)\n  })\n\n  autocompleteTo.addListener('place_changed', function(){\n    \n    var dataTo = autocompleteTo.getPlace();\n\n    console.log(dataTo.geometry.location.toJSON())\n\n    L.marker(dataTo.geometry.location.toJSON()).addTo(map)\n  })\n\n// ================================================\n\n\n  var directionsService = new google.maps.DirectionsService();\n\n  originInput = new google.maps.places.Autocomplete(document.getElementById(\"fromInput\"));\n  destinationInput = new google.maps.places.Autocomplete(document.getElementById(\"toInput\"));\n\n  function getRoute(){\n\n    origin = originInput.getPlace().geometry.location.toJSON()\n    destination = destinationInput.getPlace().geometry.location.toJSON()\n\n    var request = {\n      origin: origin,\n      destination: destination,\n      travelMode: 'WALKING'\n    }\n\n    directionsService.route(request, function(result, status) {\n      if (status == 'OK') {\n        console.log(result);\n\n        var latLngs = []\n\n        for(el in result.routes[0].overview_path){\n          latLngs.push(result.routes[0].overview_path[el].toJSON())\n        }\n\n        L.polyline(latLngs).addTo(map)\n\n        for(el in result.routes[0].overview_path){\n          console.log(result.routes[0].overview_path[el].toJSON())\n        }\n      }\n      else{\n        console.log('Error')\n      }\n    });\n\n  }\n\n  // var request = {\n  //   origin: origin,\n  //   destination: destination,\n  //   travelMode: 'WALKING'\n  // }\n\n  // result = directionsService.route(request);\n\n  // console.log(result)\n\n\n\n\n  // autocompleteFrom.addListener('place_changed', function(){\n    \n  //   var dataFrom = autocompleteFrom.getPlace();\n\n  //   console.log(dataFrom)\n\n  //   L.marker(dataFrom.geometry.location.toJSON()).addTo(map).bindPopup(dataFrom.formatted_address)\n  // })\n\n  // autocompleteTo.addListener('place_changed', function(){\n    \n  //   var dataTo = autocompleteTo.getPlace();\n\n  //   console.log(dataTo.geometry.location.toJSON())\n\n  //   L.marker(dataTo.geometry.location.toJSON()).addTo(map)\n  // })\n\n",
+			"file": "/home/fastfuse/projects/flask/new-map-app/app/static/js/my-app.js",
+			"file_size": 2466,
+			"file_write_time": 131301740159556804,
+			"settings":
+			{
+				"buffer_size": 6611,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "index.html",
+			"settings":
+			{
+				"buffer_size": 1207,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "'Hello from React'\n\n\n\n<div class=\"container-fluid\">\n\n  <div class=\"row\">\n\n    {# sidebar #}\n    <div class=\"col-xs-3\" id=\"sidebar\">\n\n      <h3>Map App</h3>\n\n      <ul class=\"nav nav-tabs\">\n        <li class=\"\"><a href=\"#home\" data-toggle=\"tab\" aria-expanded=\"false\">Home</a></li>\n        <li class=\"active\"><a href=\"#search\" data-toggle=\"tab\" aria-expanded=\"true\">Search</a></li>\n        <li class=\"\"><a href=\"#profile\" data-toggle=\"tab\" aria-expanded=\"true\">Routes</a></li>\n        <li class=\"\"><a href=\"#profile\" data-toggle=\"tab\" aria-expanded=\"true\">Stops</a></li>\n      </ul>\n\n\n      <div id=\"myTabContent\" class=\"tab-content\">\n\n        <div class=\"tab-pane fade \" id=\"home\">\n          <ul class=\"nav nav-pills nav-stacked\">\n            <li><a href=\"#\">Home</a></li>\n            <li><a href=\"#\">Search</a></li>\n          </ul>\n        </div>\n\n        <div class=\"tab-pane fade active in\" id=\"search\">\n        <br>\n\n{#         <div class=\"form-group\">\n          <label class=\"control-label\" for=\"inputSmall\">Small input</label>\n          <input class=\"form-control input-sm\" type=\"text\" id=\"inputSmall\">\n        </div> #}\n\n\n          <h3>Show route:</h3>\n          <div class=\"form-group\">\n            <label class=\"control-label\">From:</label>\n            <div class=\"input-group\">\n              <input type=\"text\" class=\"form-control\" id=\"fromInput\">\n              <span class=\"input-group-btn\">\n                <button class=\"btn btn-success\" type=\"button\" title=\"Use my location\"><i class=\"fa fa-location-arrow fa-lg\" aria-hidden=\"true\"></i></button>\n              </span>\n            </div>\n          </div>\n\n          <div class=\"form-group\">\n            <label class=\"control-label\">To:</label>\n            <div class=\"input-group\">\n              <input type=\"text\" class=\"form-control\" id=\"toInput\">\n              <span class=\"input-group-btn\">\n                <button class=\"btn btn-success\" type=\"button\" title=\"Use my location\"><i class=\"fa fa-location-arrow fa-lg\" aria-hidden=\"true\"></i></button>\n              </span>\n            </div>\n          </div>\n\n          <button class=\"btn btn-success pull-right\" type=\"button\" onclick=getRoute()>Go</button>\n\n        </div>\n      </div>\n\n    </div>\n\n\n    {# map #}\n    <div class=\"col-xs-9\" id=\"map-container\"></div>\n\n  </div>",
+			"settings":
+			{
+				"buffer_size": 2289,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/fastfuse/projects/flask/new-map-app/app/static/js/app.js",
+			"settings":
+			{
+				"buffer_size": 4558,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/fastfuse/projects/flask/helpdesk/app/templates/index.html",
+			"settings":
+			{
+				"buffer_size": 5916,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/fastfuse/projects/react/practice/assets/app.js",
+			"settings":
+			{
+				"buffer_size": 2224,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 400.0,
+		"last_filter": "pa",
+		"selected_items":
+		[
+			[
+				"pa",
+				"Package Control: Remove Package"
+			]
+		],
+		"width": 601.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/fastfuse/projects/flask/helpdesk/app/templates/base.html",
+		"/home/fastfuse/Downloads/pratt/Theme/index.html",
+		"/home/fastfuse/projects/flask/new-map-app/app/static/css/bootstrap.css",
+		"/home/fastfuse/projects/flask/new-map-app/app/static/css/app.css",
+		"/home/fastfuse/projects/react/practice/index.html",
+		"/home/fastfuse/projects/flask/new-map-app/app/templates/index.html",
+		"/home/fastfuse/projects/flask/new-map-app/app/static/js/app.js",
+		"/home/fastfuse/projects/flask/new-map-app/app/templates/new-map-app.sublime-project",
+		"/home/fastfuse/projects/react/new-map-app/static/js/app.js",
+		"/home/fastfuse/projects/react/new-map-app/1.html",
+		"/home/fastfuse/projects/react/new-map-app/2.html",
+		"/home/fastfuse/projects/react/new-map-app/index.html",
+		"/home/fastfuse/projects/flask/new-map-app/app/static/js/my-app.js",
+		"/home/fastfuse/projects/flask/new-map-app/new-map-app.sublime-project",
+		"/home/fastfuse/projects/flask/lviv-transport/.env",
+		"/home/fastfuse/.bashrc",
+		"/home/fastfuse/projects/react/first-react-app/compiled.js",
+		"/home/fastfuse/projects/react/practice/package.json",
+		"/home/fastfuse/projects/react/sample-chapter-code/voting_app/package.json",
+		"/home/fastfuse/projects/react/first-react-app/assets/css/styles.css",
+		"/home/fastfuse/.config/fish/functions/lt.fish",
+		"/home/fastfuse/Desktop/lt.fish",
+		"/home/fastfuse/Desktop/dafsdf.asd"
+	],
+	"find":
+	{
+		"height": 38.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"data",
+			"class",
+			"щкшпшт",
+			"autocompleteFrom"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/home/fastfuse/projects/flask/new-map-app/app/static/js/my-app.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6611,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6611,
+								6611
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1207,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								40,
+								40
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"syntax": "Packages/Djaneiro/Syntaxes/HTML (Django).tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2289,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2083,
+								2083
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2163,
+										2169
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/tag.png",
+										"brackethighlighter.default"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										2084,
+										2090
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"syntax": "Packages/Djaneiro/Syntaxes/HTML (Django).tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 672.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 3,
+					"file": "/home/fastfuse/projects/flask/new-map-app/app/static/js/app.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4558,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4558,
+								4558
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2752.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/home/fastfuse/projects/flask/helpdesk/app/templates/index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5916,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								50,
+								50
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2157,
+										2160
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/tag.png",
+										"brackethighlighter.default"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										47,
+										50
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"syntax": "Packages/Djaneiro/Syntaxes/HTML (Django).tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2544.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/home/fastfuse/projects/react/practice/assets/app.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2224,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"syntax": "Packages/Babel/JavaScript (Babel).sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 192.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 24.0
+	},
+	"input":
+	{
+		"height": 36.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.627338129496,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "new-map-app.sublime-project",
+	"replace":
+	{
+		"height": 44.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 50.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

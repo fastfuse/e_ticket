@@ -1,0 +1,11 @@
+html, body, .container-fluid, .row {
+   height: 100%;
+}
+
+/*#sidebar{
+  padding-top: 2px;
+}*/
+
+#map-container {
+  height: 100%;
+}

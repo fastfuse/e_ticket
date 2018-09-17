@@ -12,25 +12,115 @@
   <link rel="stylesheet" href="/static/css/bootstrap.css">
   <link rel="stylesheet" href="/static/css/leaflet.css"/>
   <link rel="stylesheet" href="static/css/app.css" />
-  <link rel="stylesheet" href="static/font-awesome/css/font-awesome.min.css">
 
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="/static/js/bootstrap.js"></script>
-  <script src="/static/js/leaflet.js"></script>
+  // <script src="/static/js/leaflet.js"></script>
 
-  <script src="static/js/babel-core-5.8.25.js"></script>
-  <script src="static/js/react.js"></script>
-  <script src="static/js/react-dom.js"></script>
+  {# // <script src="static/js/babel-core-5.8.25.js"></script> #}
+  {# // <script src="static/js/react.js"></script> #}
+  {# // <script src="static/js/react-dom.js"></script> #}
 
 </head>
 
 <body>
-  
-  <div class="container-fluid" id="app"></div>
 
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsnTEVL9PrzI012QJCydGELDTUBWd2ry4&libraries=places"></script>
+  <div class="container-fluid" id="app">
+    <div class="row">
+      <div class="col-xs-3">
+         <form class="form-horizontal">
+        <h4>Search route:</h4>
 
-  <script type="text/babel" src="/static/js/app.js"></script>
+        <div class="form-group">
+          <div class="col-xs-12">
+            <input type="text" class="form-control" id="origin" placeholder="From" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-xs-12">
+            <input type="text" class="form-control" id="destination" placeholder="To" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-xs-12">
+            <button class="btn btn-success pull-right" type="button"
+              onClick="showDirections()">Show</button>
+          </div>
+        </div>
+
+      </form>
+      </div>
+      <div class="col-xs-9" id='map'></div>
+
+    </div>
+  </div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsnTEVL9PrzI012QJCydGELDTUBWd2ry4&libraries=places">
+</script>
+
+<script >
+
+  autocompleteFrom = new google.maps.places.Autocomplete(document.getElementById("origin"));
+  autocompleteTo = new google.maps.places.Autocomplete(document.getElementById("destination"));
+
+    autocompleteFrom.addListener('place_changed', function(){
+      origin = autocompleteFrom.getPlace();
+      // L.marker(origin.geometry.location.toJSON()).addTo(map).bindPopup(origin.formatted_address)
+      console.log(origin)
+    });
+
+    autocompleteTo.addListener('place_changed', function(){
+      destination = autocompleteTo.getPlace();
+      // L.marker(destination.geometry.location.toJSON()).addTo(map).bindPopup(destination.formatted_address)
+
+      console.log(destination)
+    });
+
+
+    function showDirections(){
+    var directionsService = new google.maps.DirectionsService();
+    var originInput = new google.maps.places.Autocomplete(document.getElementById("origin"));
+    var destinationInput = new google.maps.places.Autocomplete(document.getElementById("destination"));
+
+    var origin = originInput.getPlace().geometry.location.toJSON()
+    var destination = destinationInput.getPlace().geometry.location.toJSON()
+
+    var request = {
+      origin: origin.geometry.location.toJSON(),
+      destination: destination.geometry.location.toJSON(),
+      travelMode: 'WALKING'
+    }
+
+    directionsService.route(request, function(result, status) {
+      if (status == 'OK') {
+        console.log(result);
+
+        var latLngs = []
+
+        for(var el in result.routes[0].overview_path){
+          latLngs.push(result.routes[0].overview_path[el].toJSON())
+        }
+
+        L.polyline(latLngs).addTo(map)
+
+        for(var el in result.routes[0].overview_path){
+          console.log(result.routes[0].overview_path[el].toJSON())
+        }
+      }
+      else{
+        console.log('Error')
+      }
+    });
+
+  };
+
+
+</script>
+
+
+
 
 
 </body>

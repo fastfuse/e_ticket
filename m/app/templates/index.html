@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <title>MapApp</title>
+
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/app.css">
+  <link rel="stylesheet" href="/static/css/leaflet.css"/>
+
+  <script src="/static/js/leaflet.js"></script>
+
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="/static/js/bootstrap.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+<body>
+
+  <div class="container-fluid" id="app">
+    <div class="row">
+      <div class="col-xs-12 col-md-4" id="sidebar">
+         <form class="form-horizontal">
+        <h4>Search route:</h4>
+
+        <div class="form-group">
+          <div class="col-xs-12">
+            <input type="text" class="form-control" id="origin" placeholder="From" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-xs-12">
+            <input type="text" class="form-control" id="destination" placeholder="To" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-xs-12">
+            <button class="btn btn-success btn-block" type="button"
+              onClick="showDirections()">Go</button>
+          </div>
+        </div>
+
+      </form>
+      </div>
+      <div class="col-xs-12 col-md-8" id='map'>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/static/js/map.js"></script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsnTEVL9PrzI012QJCydGELDTUBWd2ry4&libraries=places">
+</script>
+
+
+<script >
+
+  autocompleteFrom = new google.maps.places.Autocomplete(document.getElementById("origin"));
+  autocompleteTo = new google.maps.places.Autocomplete(document.getElementById("destination"));
+
+  autocompleteFrom.addListener('place_changed', function(){
+    // originValue = document.getElementById("origin");
+    origin = autocompleteFrom.getPlace();
+    L.marker(origin.geometry.location.toJSON()).addTo(map).bindPopup(origin.formatted_address)
+    console.log(origin)
+    // originValue.value = origin
+  });
+
+  autocompleteTo.addListener('place_changed', function(){
+    destination = autocompleteTo.getPlace();
+    L.marker(destination.geometry.location.toJSON()).addTo(map).bindPopup(destination.formatted_address)
+
+    console.log(destination)
+  });
+
+
+  function showDirections(){
+    var directionsService = new google.maps.DirectionsService();
+
+    var origin = document.getElementById("origin");
+    var dest = document.getElementById("destination");
+
+    console.log(origin.value)
+    console.log(dest.value)
+
+    var request = {
+          origin: document.getElementById('origin').value,
+          destination: document.getElementById('destination').value,
+          travelMode: 'DRIVING',
+          provideRouteAlternatives: true
+    };
+
+      directionsService.route(request, function(result, status) {
+        if (status == 'OK') {
+          console.log(result);
+
+          var latLngs = []
+
+          for(var el in result.routes[0].overview_path){
+            latLngs.push(result.routes[0].overview_path[el].toJSON())
+          }
+
+          L.polyline(latLngs).addTo(map)
+
+          for(var el in result.routes[0].overview_path){
+            console.log(result.routes[0].overview_path[el].toJSON())
+          }
+        }
+        else{
+          console.log('Error')
+        }
+      });
+
+  };
+
+    // directionsService.route({
+    //       origin: document.getElementById('origin').value,
+    //       destination: document.getElementById('destination').value,
+    //       travelMode: 'DRIVING'
+    //     }, function(response, status) {
+    //       if (status === 'OK') {
+    //         console.log(response);
+    //       } else {
+    //         window.alert('Directions request failed due to ' + status);
+    //       };
+
+  // var onChangeHandler = function() {
+  //         // calculateAndDisplayRoute(directionsService, directionsDisplay);
+  //         console.log(document.getElementById('origin').value)
+  //       };
+
+  // document.getElementById('origin').addEventListener('change', onChangeHandler);
+  // document.getElementById('destination').addEventListener('change', onChangeHandler);
+
+    // console.log(from)
+    // console.log(dest)
+
+  //   function showDirections(){
+  //     var directionsService = new google.maps.DirectionsService();
+  //     var originInput = new google.maps.places.Autocomplete(document.getElementById("origin"));
+  //     var destinationInput = new google.maps.places.Autocomplete(document.getElementById("destination"));
+
+  //     var origin = originInput.getPlace().geometry.location.toJSON()
+  //     var destination = destinationInput.getPlace().geometry.location.toJSON()
+
+  //     var request = {
+  //       origin: origin.geometry.location.toJSON(),
+  //       destination: destination.geometry.location.toJSON(),
+  //       // travelMode: 'WALKING'
+  //     }
+
+      // directionsService.route(request, function(result, status) {
+      //   if (status == 'OK') {
+      //     console.log(result);
+
+      //     var latLngs = []
+
+      //     for(var el in result.routes[0].overview_path){
+      //       latLngs.push(result.routes[0].overview_path[el].toJSON())
+      //     }
+
+      //     L.polyline(latLngs).addTo(map)
+
+      //     for(var el in result.routes[0].overview_path){
+      //       console.log(result.routes[0].overview_path[el].toJSON())
+      //     }
+      //   }
+      //   else{
+      //     console.log('Error')
+      //   }
+      // });
+
+  // };
+
+
+</script>
+
+</body>
+</html>

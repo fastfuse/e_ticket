@@ -2,10 +2,10 @@ html, body, .container-fluid, .row {
    height: 100%;
 }
 
-/*#sidebar{
-  padding-top: 2px;
-}*/
-
-#map-container {
+/*#app{
+  padding-top: 70px;
+}
+*/
+#map {
   height: 100%;
-}a
+}

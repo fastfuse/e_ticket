@@ -1,100 +1,28 @@
-var App = React.createClass({
-  render: function(){
+class App extends React.Component{
+  render(){
     return(<div className="row">
              <Sidebar />
              <Map />
            </div>
           )
   }
-})
+}
 
 
-var Sidebar = React.createClass({
-  render: function(){
+class Sidebar extends React.Component{
+  render(){
     return(
-      <div className="col-xs-3" id="sidebar">
-      <Title />
-      <Search />
+      <div className="col-xs-12 col-md-4" id="sidebar">
+        <Search />
       </div>
     )
   }
-})
+}
 
 
-var Title = React.createClass({
-  render: function(){
-    return(
-      <h3>Map App</h3>
-    )
-  }
-})
+class Search extends React.Component{
 
-
-var origin, destination;
-
-
-var Search = React.createClass({
-
-  getInitialState: function(){
-    return{
-      origin: '',
-      destination: ''
-    }
-  },
-
-  componentDidMount: function(){
-    var autocompleteFrom = new google.maps.places.Autocomplete(document.getElementById("origin"));
-    var autocompleteTo = new google.maps.places.Autocomplete(document.getElementById("destination"));
-
-    autocompleteFrom.addListener('place_changed', function(){
-      origin = autocompleteFrom.getPlace();
-      L.marker(origin.geometry.location.toJSON()).addTo(map).bindPopup(origin.formatted_address)
-    })
-
-    autocompleteTo.addListener('place_changed', function(){
-      destination = autocompleteTo.getPlace();
-      L.marker(destination.geometry.location.toJSON()).addTo(map).bindPopup(destination.formatted_address)
-    })
-  },
-
-  showDirections: function(){
-    var directionsService = new google.maps.DirectionsService();
-    var originInput = new google.maps.places.Autocomplete(document.getElementById("origin"));
-    var destinationInput = new google.maps.places.Autocomplete(document.getElementById("destination"));
-
-    // var origin = originInput.getPlace().geometry.location.toJSON()
-    // var destination = destinationInput.getPlace().geometry.location.toJSON()
-
-    var request = {
-      origin: origin.geometry.location.toJSON(),
-      destination: destination.geometry.location.toJSON(),
-      travelMode: 'WALKING'
-    }
-
-    directionsService.route(request, function(result, status) {
-      if (status == 'OK') {
-        console.log(result);
-
-        var latLngs = []
-
-        for(var el in result.routes[0].overview_path){
-          latLngs.push(result.routes[0].overview_path[el].toJSON())
-        }
-
-        L.polyline(latLngs).addTo(map)
-
-        for(var el in result.routes[0].overview_path){
-          console.log(result.routes[0].overview_path[el].toJSON())
-        }
-      }
-      else{
-        console.log('Error')
-      }
-    });
-
-  },
-
-  render: function(){
+  render(){
     return(
       <form className="form-horizontal">
         <h4>Search route:</h4>
@@ -113,7 +41,7 @@ var Search = React.createClass({
 
         <div className="form-group">
           <div className="col-xs-12">
-            <button className="btn btn-success pull-right" type="button"
+            <button className="btn btn-success btn-block" type="button"
               onClick={this.showDirections}>Show</button>
           </div>
         </div>
@@ -121,21 +49,33 @@ var Search = React.createClass({
       </form>
     )
   }
-})
+}
 
 
-var Map = React.createClass({
-  render: function(){
-    return(<div className="col-xs-9 map-container" id="map-container"></div>)
+class Map extends React.Component{
+  componentDidMount() {
+
+      console.log('didddddd')
+
+      this.initMap()
+    }
+
+  initMap() {
+        // var map = new google.maps.Map(document.getElementById('map'), {
+        //   zoom: 13,
+        //   center: {lat: 49.84104, lng: 24.03164}
+        // });
+const map = new window.google.maps.Map(document.getElementById('map'), {
+      center: { lat: 41.0082, lng: 28.9784 },
+      zoom: 8
+    });
+
+      }
+
+  render(){
+    return(<div className="col-xs-8" id="map"></div>)
   }
-})
-
-
-
-
-
-
-
+}
 
 
 
@@ -145,37 +85,11 @@ ReactDOM.render(
 )
 
 
-
 // ======================   Maps part   =================================
 
-var osm = L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png"),
-
-    mapboxLight = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmFzdGZ1c2UiLCJhIjoiY2l1ZnN3cm0yMDAyczJ2dXZyYWZnaWVjciJ9.411LJ8YHIUYLmTGrfvfkLg"),
-
-    mapboxStreets = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmFzdGZ1c2UiLCJhIjoiY2l1ZnN3cm0yMDAyczJ2dXZyYWZnaWVjciJ9.411LJ8YHIUYLmTGrfvfkLg"),
-
-    mapboxDark = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/dark-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZmFzdGZ1c2UiLCJhIjoiY2l1ZnN3cm0yMDAyczJ2dXZyYWZnaWVjciJ9.411LJ8YHIUYLmTGrfvfkLg");
-
-
-var baseMapLayers = {
-    "Open Street Maps": osm,
-    "Mapbox Streets": mapboxStreets,
-    "Mapbox Light": mapboxLight,
-    "Mapbox Dark": mapboxDark
-};
-
-
-var map = L.map('map-container', {
-  center: [49.84104, 24.03164],
-  zoom: 13,
-  zoomControl: false,
-  layers: [osm]
-});
-
-L.control.layers(baseMapLayers).addTo(map);
-
-
-L.control.zoom({
-  position: 'bottomright'
-}).addTo(map);
-
+  // function initMap() {
+  //     var map = new google.maps.Map(document.getElementById('map'), {
+  //       zoom: 13,
+  //       center: {lat: 49.84104, lng: 24.03164}
+  //     });
+  //   }

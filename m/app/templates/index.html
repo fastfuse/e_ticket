@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,134 +14,31 @@
   <link rel="stylesheet" href="/static/css/app.css">
   <link rel="stylesheet" href="/static/css/leaflet.css"/>
 
-  <script src="/static/js/leaflet.js"></script>
-
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="/static/js/bootstrap.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 
+
+  <script src="static/js/babel-core-5.8.25.js"></script>
+  <script src="static/js/react.js"></script>
+  <script src="static/js/react-dom.js"></script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7ZXOS5Bpp8MHRH98KJ6NPP9W-x0S3Zrk&libraries=places"></script>
+
+<head />
+
 <body>
 
-  <div class="container-fluid" id="app">
-    <div class="row">
-      <div class="col-xs-12 col-md-4" id="sidebar">
-         <form class="form-horizontal">
-        <h4>Search route:</h4>
+  <div class="container-fluid" id="app"></div>
 
-        <div class="form-group">
-          <div class="col-xs-12">
-            <input type="text" class="form-control" id="origin" placeholder="From" />
-          </div>
-        </div>
+  {# // <script src="/static/js/map.js"></script> #}
 
-        <div class="form-group">
-          <div class="col-xs-12">
-            <input type="text" class="form-control" id="destination" placeholder="To" />
-          </div>
-        </div>
+  {# // <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7ZXOS5Bpp8MHRH98KJ6NPP9W-x0S3Zrk&libraries=places"></script> #}
 
-        <div class="form-group">
-          <div class="col-xs-12">
-            <button class="btn btn-success btn-block" type="button"
-              onClick="calculateAndDisplayRoute()">Go</button>
-          </div>
-        </div>
-
-      </form>
-      </div>
-      <div class="col-xs-12 col-md-8" id='map'>
-
-      </div>
-
-    </div>
-  </div>
-
-  <script src="/static/js/map.js"></script>
-
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7ZXOS5Bpp8MHRH98KJ6NPP9W-x0S3Zrk&callback=initMap&libraries=places"></script>
-
-  <script >
-
-    var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 13,
-        center: {lat: 49.84104, lng: 24.03164}
-      });
+  <script type="text/babel" src="/static/js/app.js"></script>
 
 
-    // var marker = new google.maps.Marker({
-    //           map: map,
-    //           anchorPoint: new google.maps.Point(0, -29)
-    //         });
 
-    autocompleteFrom = new google.maps.places.Autocomplete(document.getElementById("origin"));
-    autocompleteTo = new google.maps.places.Autocomplete(document.getElementById("destination"));
-
-    autocompleteFrom.bindTo('bounds', map);
-    autocompleteTo.bindTo('bounds', map);
-
-    autocompleteFrom.addListener('place_changed', function(){
-      origin = autocompleteFrom.getPlace();
-
-      console.log(origin)
-
-      if (origin.geometry.viewport) {
-              map.fitBounds(origin.geometry.viewport);
-            } else {
-              map.setCenter(origin.geometry.location);
-              map.setZoom(17);  // Why 17? Because it looks good.
-            }
-
-            var marker = new google.maps.Marker({
-              map: map,
-            });
-
-            marker.setPosition(origin.geometry.location);
-            marker.setVisible(true);
-
-    });
-
-    autocompleteTo.addListener('place_changed', function(){
-      origin = autocompleteTo.getPlace();
-
-      console.log(origin)
-
-      if (origin.geometry.viewport) {
-              map.fitBounds(origin.geometry.viewport);
-            } else {
-              map.setCenter(origin.geometry.location);
-              map.setZoom(17);  // Why 17? Because it looks good.
-            }
-
-            var marker = new google.maps.Marker({
-              map: map,
-            });
-
-            marker.setPosition(origin.geometry.location);
-            marker.setVisible(true);
-
-    });
-
-    var directionsService = new google.maps.DirectionsService;
-    var directionsDisplay = new google.maps.DirectionsRenderer;
-
-    directionsDisplay.setMap(map);
-
-    function calculateAndDisplayRoute() {
-      directionsService.route({
-        origin: document.getElementById('origin').value,
-        destination: document.getElementById('destination').value,
-        travelMode: 'DRIVING'
-      }, function(response, status) {
-        if (status === 'OK') {
-          console.log(response)
-          directionsDisplay.setDirections(response);
-        } else {
-          window.alert('Directions request failed due to ' + status);
-        }
-      });}
-
-
-  </script>
 
 </body>
 </html>

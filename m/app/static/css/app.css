@@ -2,10 +2,6 @@ html, body, .container-fluid, .row {
    height: 100%;
 }
 
-/*#app{
-  padding-top: 70px;
-}
-*/
 #map {
   height: 100%;
 }

@@ -129,10 +129,24 @@
       directionsService.route({
         origin: document.getElementById('origin').value,
         destination: document.getElementById('destination').value,
-        travelMode: 'DRIVING'
+        travelMode: 'DRIVING',
+        provideRouteAlternatives: true
       }, function(response, status) {
         if (status === 'OK') {
+
           console.log(response)
+
+          for (var i = 0, len = response.routes.length; i < len; i++) {
+                new google.maps.DirectionsRenderer({
+                    map: map,
+                    directions: response,
+                    routeIndex: i
+                });
+                // directionsDisplay.setDirections(response);
+
+            }
+
+          // console.log(response)
           directionsDisplay.setDirections(response);
         } else {
           window.alert('Directions request failed due to ' + status);

@@ -42,7 +42,7 @@
         <div class="form-group">
           <div class="col-xs-12">
             <button class="btn btn-success btn-block" type="button"
-              onClick="showDirections()">Go</button>
+              onClick="calculateAndDisplayRoute()">Go</button>
           </div>
         </div>
 
@@ -57,131 +57,90 @@
 
   <script src="/static/js/map.js"></script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsnTEVL9PrzI012QJCydGELDTUBWd2ry4&libraries=places">
-</script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7ZXOS5Bpp8MHRH98KJ6NPP9W-x0S3Zrk&callback=initMap&libraries=places"></script>
 
+  <script >
 
-<script >
-
-  autocompleteFrom = new google.maps.places.Autocomplete(document.getElementById("origin"));
-  autocompleteTo = new google.maps.places.Autocomplete(document.getElementById("destination"));
-
-  autocompleteFrom.addListener('place_changed', function(){
-    // originValue = document.getElementById("origin");
-    origin = autocompleteFrom.getPlace();
-    L.marker(origin.geometry.location.toJSON()).addTo(map).bindPopup(origin.formatted_address)
-    console.log(origin)
-    // originValue.value = origin
-  });
-
-  autocompleteTo.addListener('place_changed', function(){
-    destination = autocompleteTo.getPlace();
-    L.marker(destination.geometry.location.toJSON()).addTo(map).bindPopup(destination.formatted_address)
-
-    console.log(destination)
-  });
-
-
-  function showDirections(){
-    var directionsService = new google.maps.DirectionsService();
-
-    var origin = document.getElementById("origin");
-    var dest = document.getElementById("destination");
-
-    console.log(origin.value)
-    console.log(dest.value)
-
-    var request = {
-          origin: document.getElementById('origin').value,
-          destination: document.getElementById('destination').value,
-          travelMode: 'DRIVING',
-          provideRouteAlternatives: true
-    };
-
-      directionsService.route(request, function(result, status) {
-        if (status == 'OK') {
-          console.log(result);
-
-          var latLngs = []
-
-          for(var el in result.routes[0].overview_path){
-            latLngs.push(result.routes[0].overview_path[el].toJSON())
-          }
-
-          L.polyline(latLngs).addTo(map)
-
-          for(var el in result.routes[0].overview_path){
-            console.log(result.routes[0].overview_path[el].toJSON())
-          }
-        }
-        else{
-          console.log('Error')
-        }
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 13,
+        center: {lat: 49.84104, lng: 24.03164}
       });
 
-  };
 
-    // directionsService.route({
-    //       origin: document.getElementById('origin').value,
-    //       destination: document.getElementById('destination').value,
-    //       travelMode: 'DRIVING'
-    //     }, function(response, status) {
-    //       if (status === 'OK') {
-    //         console.log(response);
-    //       } else {
-    //         window.alert('Directions request failed due to ' + status);
-    //       };
+    // var marker = new google.maps.Marker({
+    //           map: map,
+    //           anchorPoint: new google.maps.Point(0, -29)
+    //         });
 
-  // var onChangeHandler = function() {
-  //         // calculateAndDisplayRoute(directionsService, directionsDisplay);
-  //         console.log(document.getElementById('origin').value)
-  //       };
+    autocompleteFrom = new google.maps.places.Autocomplete(document.getElementById("origin"));
+    autocompleteTo = new google.maps.places.Autocomplete(document.getElementById("destination"));
 
-  // document.getElementById('origin').addEventListener('change', onChangeHandler);
-  // document.getElementById('destination').addEventListener('change', onChangeHandler);
+    autocompleteFrom.bindTo('bounds', map);
+    autocompleteTo.bindTo('bounds', map);
 
-    // console.log(from)
-    // console.log(dest)
+    autocompleteFrom.addListener('place_changed', function(){
+      origin = autocompleteFrom.getPlace();
 
-  //   function showDirections(){
-  //     var directionsService = new google.maps.DirectionsService();
-  //     var originInput = new google.maps.places.Autocomplete(document.getElementById("origin"));
-  //     var destinationInput = new google.maps.places.Autocomplete(document.getElementById("destination"));
+      console.log(origin)
 
-  //     var origin = originInput.getPlace().geometry.location.toJSON()
-  //     var destination = destinationInput.getPlace().geometry.location.toJSON()
+      if (origin.geometry.viewport) {
+              map.fitBounds(origin.geometry.viewport);
+            } else {
+              map.setCenter(origin.geometry.location);
+              map.setZoom(17);  // Why 17? Because it looks good.
+            }
 
-  //     var request = {
-  //       origin: origin.geometry.location.toJSON(),
-  //       destination: destination.geometry.location.toJSON(),
-  //       // travelMode: 'WALKING'
-  //     }
+            var marker = new google.maps.Marker({
+              map: map,
+            });
 
-      // directionsService.route(request, function(result, status) {
-      //   if (status == 'OK') {
-      //     console.log(result);
+            marker.setPosition(origin.geometry.location);
+            marker.setVisible(true);
 
-      //     var latLngs = []
+    });
 
-      //     for(var el in result.routes[0].overview_path){
-      //       latLngs.push(result.routes[0].overview_path[el].toJSON())
-      //     }
+    autocompleteTo.addListener('place_changed', function(){
+      origin = autocompleteTo.getPlace();
 
-      //     L.polyline(latLngs).addTo(map)
+      console.log(origin)
 
-      //     for(var el in result.routes[0].overview_path){
-      //       console.log(result.routes[0].overview_path[el].toJSON())
-      //     }
-      //   }
-      //   else{
-      //     console.log('Error')
-      //   }
-      // });
+      if (origin.geometry.viewport) {
+              map.fitBounds(origin.geometry.viewport);
+            } else {
+              map.setCenter(origin.geometry.location);
+              map.setZoom(17);  // Why 17? Because it looks good.
+            }
 
-  // };
+            var marker = new google.maps.Marker({
+              map: map,
+            });
+
+            marker.setPosition(origin.geometry.location);
+            marker.setVisible(true);
+
+    });
+
+    var directionsService = new google.maps.DirectionsService;
+    var directionsDisplay = new google.maps.DirectionsRenderer;
+
+    directionsDisplay.setMap(map);
+
+    function calculateAndDisplayRoute() {
+      directionsService.route({
+        origin: document.getElementById('origin').value,
+        destination: document.getElementById('destination').value,
+        travelMode: 'DRIVING'
+      }, function(response, status) {
+        if (status === 'OK') {
+          console.log(response)
+          directionsDisplay.setDirections(response);
+        } else {
+          window.alert('Directions request failed due to ' + status);
+        }
+      });}
 
 
-</script>
+  </script>
 
 </body>
 </html>

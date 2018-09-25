@@ -47,10 +47,14 @@
         </div>
 
       </form>
-      </div>
-      <div class="col-xs-12 col-md-8" id='map'>
+
+      <div id="result">
+        <h3>result</h3>
 
       </div>
+
+      </div>
+      <div class="col-xs-12 col-md-8" id='map'></div>
 
     </div>
   </div>
@@ -65,12 +69,6 @@
         zoom: 13,
         center: {lat: 49.84104, lng: 24.03164}
       });
-
-
-    // var marker = new google.maps.Marker({
-    //           map: map,
-    //           anchorPoint: new google.maps.Point(0, -29)
-    //         });
 
     autocompleteFrom = new google.maps.places.Autocomplete(document.getElementById("origin"));
     autocompleteTo = new google.maps.places.Autocomplete(document.getElementById("destination"));
@@ -136,18 +134,20 @@
 
           console.log(response)
 
-          for (var i = 0, len = response.routes.length; i < len; i++) {
+          for (var i = 0; i < response.routes.length; i++) {
+
+                // infoDiv = document.getElementById('result')
                 new google.maps.DirectionsRenderer({
                     map: map,
                     directions: response,
-                    routeIndex: i
+                    routeIndex: i,
+                    // panel: infoDiv
                 });
-                // directionsDisplay.setDirections(response);
+
+                $('#result').append('<h3>' + response.routes[i].summary + '<h3/>');
 
             }
 
-          // console.log(response)
-          directionsDisplay.setDirections(response);
         } else {
           window.alert('Directions request failed due to ' + status);
         }
